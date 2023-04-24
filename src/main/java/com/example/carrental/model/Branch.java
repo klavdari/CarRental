@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Branch {
+    private int id;
     private String address;
     private List<Employee> employees;
     private List<Car> availableCars;

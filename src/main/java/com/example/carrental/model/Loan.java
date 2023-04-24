@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Loan {
+    private int id;
     private Employee employee;
     private Reservation reservation;
     private String comments;

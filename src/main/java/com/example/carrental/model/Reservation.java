@@ -9,6 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reservation {
+    private int id;
     private Date dateOfBooking;
     private Customer customer;
     private Car car;

@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Rental {
 
+    private int id;
     private String name;
     private String internetDomain;
     private String contactAddress;

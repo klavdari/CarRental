@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Refund {
+    private int id;
     private Employee employee;
     private Reservation reservation;
     private double surcharge;
