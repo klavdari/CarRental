@@ -1,4 +1,7 @@
 package com.example.carrental.repository;
 
-public interface LoanRepository {
+import com.example.carrental.model.Loan;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LoanRepository extends JpaRepository<Loan,Integer> {
 }
