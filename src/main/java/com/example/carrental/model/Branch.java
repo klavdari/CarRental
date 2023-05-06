@@ -1,5 +1,6 @@
 package com.example.carrental.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,5 +29,9 @@ public class Branch {
     private List<Employee> employees;
     @OneToMany(mappedBy = "branchLocated")
     private List<Car> availableCars;
+
+    @ManyToOne
+    @JsonIgnore
+    private Rental rental;
 
 }

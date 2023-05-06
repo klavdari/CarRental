@@ -1,5 +1,6 @@
 package com.example.carrental.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class Car {
     private double amountPerDay;
 
     @ManyToOne
+    @JsonIgnore
     private Branch branchLocated;
 
 

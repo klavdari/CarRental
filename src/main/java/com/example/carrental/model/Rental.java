@@ -30,7 +30,7 @@ public class Rental {
     private String owner;
     @Column(name = "logo_type")
     private String logoType;
-    @OneToMany
+    @OneToMany(mappedBy = "rental")
     private List<Branch> branches;
 
 }
