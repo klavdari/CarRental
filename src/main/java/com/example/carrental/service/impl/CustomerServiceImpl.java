@@ -37,4 +37,16 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomerById(int id) {
         customerRepository.deleteById(id);
     }
+
+    @Override
+    public Customer updateCustomer(Customer customer, int id) {
+        Customer newCustomer = getCustomerById(id);
+
+        newCustomer.setAddress(customer.getAddress());
+        newCustomer.setEmail(customer.getEmail());
+        newCustomer.setFirstName(customer.getFirstName());
+        newCustomer.setLastName(customer.getLastName());
+
+        return customerRepository.save(newCustomer);
+    }
 }

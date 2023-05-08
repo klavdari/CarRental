@@ -23,7 +23,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car addNewCar(Car car,int branchId){
-      Branch branch =  branchRepository.findById(branchId).orElse(null);
+      Branch branch =  branchRepository.findById(branchId).orElseThrow(() -> new RuntimeException("Branch does not exist"));
         car.setBranchLocated(branch);
         return carRepository.save(car);
     }
