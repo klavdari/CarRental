@@ -14,6 +14,7 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "employee_id")
     private int id;
 
     @Column(name = "first_name")
@@ -27,6 +28,7 @@ public class Employee {
     private Position position;
 
     @ManyToOne
+    @JoinColumn(name = "working_branch")
     private Branch workingBranch;
 
 

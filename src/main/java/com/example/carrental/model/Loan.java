@@ -12,12 +12,17 @@ import lombok.NoArgsConstructor;
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "loan_id")
     private int id;
 
     @ManyToOne
+    @JoinColumn(name = "employee")
     private Employee employee;
+
     @OneToOne
+    @JoinColumn(name = "reservation")
     private Reservation reservation;
+
     @Column(name = "comments")
     private String comments;
 }

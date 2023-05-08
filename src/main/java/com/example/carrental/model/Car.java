@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "car_id")
     private int id;
 
     @Column(name = "brand")
@@ -44,6 +45,7 @@ public class Car {
 
     @ManyToOne
     @JsonIgnore
+    @JoinColumn(name = "branch_located")
     private Branch branchLocated;
 
 

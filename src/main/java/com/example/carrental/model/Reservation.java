@@ -15,15 +15,18 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reservation_id")
     private int id;
 
     @Column(name = "date_of_booking")
     private Date dateOfBooking;
 
     @ManyToOne
+    @JoinColumn(name = "customer")
     private Customer customer;
 
     @ManyToOne
+    @JoinColumn(name = "car")
     private Car car;
 
     @Column(name = "from_date")
@@ -33,9 +36,11 @@ public class Reservation {
     private Date dateTo;
 
     @ManyToOne
+    @JoinColumn(name = "branch_of_loan")
     private Branch branchOfLoan;
 
     @ManyToOne
+    @JoinColumn(name = "branch_of_return")
     private Branch branchOfReturn;
 
     @Column(name = "total_amount")
