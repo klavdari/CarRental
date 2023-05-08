@@ -12,31 +12,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rental/{rentalId}")
+@RequestMapping("")
 public class BranchController {
 
-    @Autowired
+
     private BranchService branchService;
 
+    @Autowired
+    public BranchController(BranchService branchService) {
+        this.branchService = branchService;
+    }
+
     @PostMapping("/branch")
-    public ResponseEntity<Branch> addBranch(@PathVariable(value = "rentalId") int rentalId,
+    public ResponseEntity<Branch> addBranch(int rentalId,
                                             @RequestBody Branch branch){
         Branch newBranch= branchService.create(rentalId,branch);
         return new ResponseEntity<>(newBranch, HttpStatus.CREATED);
     }
 
     @GetMapping("/branch")
-    public List<Branch> getBranchesByRentalId(@PathVariable(value = "rentalId") int rentalId){
+    public List<Branch> getBranchesByRentalId(int rentalId){
         return branchService.getBranchesByRentalId(rentalId);
     }
 
     @GetMapping("/branch/{branchId}")
-    public Branch getBranchById(@PathVariable("branchId") int id, @PathVariable("rentalId") int rentalId){
+    public Branch getBranchById(@PathVariable("branchId") int id, int rentalId){
         return branchService.getBranchById(id,rentalId);
     }
 
     @DeleteMapping("/branch/{branchId}")
-    public ResponseEntity deleteBranchById(@PathVariable("branchId") int id, @PathVariable("rentalId") int rentalId){
+    public ResponseEntity deleteBranchById(@PathVariable("branchId") int id, int rentalId){
         branchService.delete(id,rentalId);
         return new ResponseEntity(HttpStatus.OK);
     }

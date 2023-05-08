@@ -30,6 +30,7 @@ public class CarController {
     public List<Car> getCarsByBranch(@RequestBody int branchId){
         return carService.getCars(branchId);
     }
+
     @GetMapping("/{carId}")
     public Car getCar(@PathVariable(value = "carId") int carId , int branchId){
         return carService.getCar(carId,branchId);
