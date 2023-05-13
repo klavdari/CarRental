@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.model.Refund;
 import com.example.carrental.service.RefundService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class RefundController {
     }
 
     @PostMapping
-    public ResponseEntity<Refund> addRefund(@RequestBody Refund refund){
+    public ResponseEntity<Refund> addRefund(@Valid @RequestBody Refund refund){
         return new ResponseEntity<>(refundService.addRefund(refund), HttpStatus.CREATED);
     }
 
@@ -35,7 +36,7 @@ public class RefundController {
     }
 
     @PutMapping
-    public ResponseEntity<Refund> updateRefund(@RequestBody Refund refund,int id){
+    public ResponseEntity<Refund> updateRefund(@Valid @RequestBody Refund refund, int id){
        return new ResponseEntity<>( refundService.updateRefund(refund, id),HttpStatus.OK);
     }
 

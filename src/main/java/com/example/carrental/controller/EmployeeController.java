@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.model.Employee;
 import com.example.carrental.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
     @PostMapping
-    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee){
+    public ResponseEntity<Employee> addEmployee(@Valid @RequestBody Employee employee){
         return new ResponseEntity<>(employeeService.addNewEmployee(employee), HttpStatus.CREATED);
     }
 
@@ -33,7 +34,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@RequestBody Employee employee,@PathVariable int id){
+    public ResponseEntity<Employee> updateEmployee(@Valid @RequestBody Employee employee, @PathVariable int id){
         return new ResponseEntity<>(employeeService.updateEmployee(employee,id),HttpStatus.OK);
     }
 

@@ -1,6 +1,7 @@
 package com.example.carrental.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class Refund {
     private Reservation reservation;
 
     @Column(name = "surcharge")
+    @Min(value = 1,message = "cannot be lower than 1")
     private double surcharge;
 
     @Column(name = "comments")

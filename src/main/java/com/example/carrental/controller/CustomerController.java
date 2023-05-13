@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.model.Customer;
 import com.example.carrental.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer){
+    public ResponseEntity<Customer> addCustomer(@Valid @RequestBody Customer customer){
         Customer newCustomer = customerService.create(customer);
 
         return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
@@ -44,7 +45,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer,@PathVariable int id){
+    public ResponseEntity<Customer> updateCustomer(@Valid @RequestBody Customer customer,@PathVariable int id){
         return new ResponseEntity<>(customerService.updateCustomer(customer,id),HttpStatus.OK);
     }
 }

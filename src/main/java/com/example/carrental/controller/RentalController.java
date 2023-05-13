@@ -2,6 +2,7 @@ package com.example.carrental.controller;
 
 import com.example.carrental.model.Rental;
 import com.example.carrental.service.RentalService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class RentalController {
     private RentalService rentalService;
 
     @PostMapping()
-    public ResponseEntity<Rental> addRental(@RequestBody Rental rental){
+    public ResponseEntity<Rental> addRental(@Valid @RequestBody Rental rental){
 
         Rental newRental= rentalService.createNewRental(rental);
 
@@ -43,7 +44,7 @@ public class RentalController {
     }
 
     @PutMapping("/{id}")
-    public Rental updateRental(@RequestBody Rental rental,@PathVariable int id){
+    public Rental updateRental(@Valid @RequestBody Rental rental,@PathVariable int id){
         return rentalService.configureRental(rental,id);
     }
 

@@ -1,9 +1,8 @@
 package com.example.carrental.controller;
 
 import com.example.carrental.model.Branch;
-import com.example.carrental.model.Rental;
 import com.example.carrental.service.BranchService;
-import com.example.carrental.service.RentalService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class BranchController {
 
     @PostMapping("/branch")
     public ResponseEntity<Branch> addBranch(int rentalId,
-                                            @RequestBody Branch branch){
+                                           @Valid @RequestBody Branch branch){
         Branch newBranch= branchService.create(rentalId,branch);
         return new ResponseEntity<>(newBranch, HttpStatus.CREATED);
     }

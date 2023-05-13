@@ -1,5 +1,6 @@
 package com.example.carrental.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "branch_of_loan")
+
     private Branch branchOfLoan;
 
     @ManyToOne
