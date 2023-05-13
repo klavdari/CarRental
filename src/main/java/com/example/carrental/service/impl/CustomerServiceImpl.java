@@ -1,5 +1,6 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Customer;
 import com.example.carrental.repository.CustomerRepository;
 import com.example.carrental.service.CustomerService;
@@ -30,7 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer getCustomerById(int id) {
 
-        return customerRepository.findById(id).orElse(null);
+        return customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer","id",id));
     }
 
     @Override

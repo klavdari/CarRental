@@ -1,5 +1,6 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Branch;
 import com.example.carrental.model.Car;
 import com.example.carrental.repository.BranchRepository;
@@ -40,7 +41,7 @@ public class CarServiceImpl implements CarService {
                 .stream()
                 .filter(c->c.getId() == id)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Car","id",id));
     }
 
     @Override

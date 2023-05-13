@@ -1,5 +1,6 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Employee;
 import com.example.carrental.repository.EmployeeRepository;
 import com.example.carrental.service.EmployeeService;
@@ -30,12 +31,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee getById(int id) {
 
-        return employeeRepository.findById(id).orElse(null);
+        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee","id",id));
     }
 
     @Override
     public Employee updateEmployee(Employee newEmployee, int id) {
-        Employee employee = employeeRepository.findById(id).orElse(null);
+        Employee employee = getById(id);
 
         employee.setPosition(newEmployee.getPosition());
         employee.setWorkingBranch(newEmployee.getWorkingBranch());

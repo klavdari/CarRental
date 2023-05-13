@@ -1,5 +1,6 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.repository.RentalRepository;
 import com.example.carrental.model.Rental;
 import com.example.carrental.service.RentalService;
@@ -27,7 +28,7 @@ public class RentalServiceImpl implements RentalService {
     }
     @Override
     public Rental getRental(int id) {
-        return rentalRepository.findById(id).orElse(null);
+        return rentalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rental","id",id));
 
     }
 
@@ -44,7 +45,7 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public Rental configureRental(Rental newRental, int id) {
 
-        Rental rental = rentalRepository.findById(id).orElse(null);
+        Rental rental = rentalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Rental","id",id));
 
         rental.setName(newRental.getName());
         rental.setOwner(newRental.getOwner());
@@ -54,32 +55,6 @@ public class RentalServiceImpl implements RentalService {
 
         return rentalRepository.save(rental);
     }
-
-
-//
-//    // convert Entity into DTO
-//    private RentalDto mapToDTO(Rental rental){
-//
-//        RentalDto rentalDto = new RentalDto();
-//        rentalDto.setId(rental.getId());
-//        rentalDto.setName(rental.getName());
-//        rentalDto.setOwner(rental.getOwner());
-//        rentalDto.setAddress(rental.getAddress());
-//        rentalDto.setLogoType(rental.getLogoType());
-//        return rentalDto;
-//    }
-//
-//    // convert DTO to entity
-//    private Rental mapToEntity(RentalDto rentalDto){
-//
-//        Rental rental = new Rental();
-//        rental.setName(rentalDto.getName());
-//        rental.setOwner(rentalDto.getOwner());
-//        rental.setAddress(rentalDto.getAddress());
-//        rental.setLogoType(rentalDto.getLogoType());
-//        rental.setInternetDomain(rentalDto.getInternetDomain());
-//        return rental;
-//    }
 
 
 }
