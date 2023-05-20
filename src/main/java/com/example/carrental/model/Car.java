@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,11 +23,9 @@ public class Car {
     private int id;
 
     @Column(name = "brand")
-    @NotEmpty(message = "Brand cannot be empty")
     private String brand;
 
     @Column(name = "model")
-    @NotEmpty(message = "Model cannot be empty")
     private String model;
 
     @Enumerated(EnumType.STRING)
@@ -33,28 +33,29 @@ public class Car {
     private Body bodyType;
 
     @Column(name = "color")
-    @NotEmpty(message = "Color cannot be empty")
     private String color;
 
     @Column(name = "year")
-    @Min(value = 1950,message = "Year cannot be lower than 1950")
-    @NotNull(message = "Brand cannot be empty")
     private int year;
 
     @Column(name = "mileage")
-    @NotNull
     private int mileage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
 
+    @Column(name = "status_from_date")
+    private LocalDate fromDateStatus;
+
+    @Column(name = "status_to_date")
+    private LocalDate toDateStatus;
+
     @Column(name = "amount_per_day")
     @NotNull
     private double amountPerDay;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "branch_located")
     private Branch branchLocated;
 

@@ -1,11 +1,13 @@
 package com.example.carrental.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 @Data
 @NoArgsConstructor
@@ -19,8 +21,10 @@ public class Reservation {
     @Column(name = "reservation_id")
     private int id;
 
+    @CreationTimestamp
     @Column(name = "date_of_booking")
-    private Date dateOfBooking;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Instant dateOfBooking;
 
     @ManyToOne
     @JoinColumn(name = "customer")
@@ -30,15 +34,16 @@ public class Reservation {
     @JoinColumn(name = "car")
     private Car car;
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "from_date")
-    private Date dateFrom;
+    private LocalDate dateFrom;
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "to_date")
-    private Date dateTo;
+    private LocalDate dateTo;
 
     @ManyToOne
     @JoinColumn(name = "branch_of_loan")
-
     private Branch branchOfLoan;
 
     @ManyToOne

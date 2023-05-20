@@ -19,7 +19,7 @@ public class Loan {
     @JoinColumn(name = "employee")
     private Employee employee;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "reservation")
     private Reservation reservation;
 
