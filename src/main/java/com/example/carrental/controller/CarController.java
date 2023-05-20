@@ -1,5 +1,6 @@
 package com.example.carrental.controller;
 
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.model.Car;
 import com.example.carrental.service.CarService;
 import jakarta.validation.Valid;
@@ -22,27 +23,27 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<Car> addNewCar(@Valid @RequestBody Car car, int branchId){
-        Car newCar =  carService.addNewCar(car,branchId);
-
+    public ResponseEntity<CarDto> addNewCar(
+            @Valid @RequestBody CarDto car){
+    CarDto newCar = carService.addNewCar(car);
         return new ResponseEntity<>(newCar,HttpStatus.CREATED);
     }
     @GetMapping
-    public List<Car> getCarsByBranch(@RequestBody int branchId){
-        return carService.getCars(branchId);
+    public List<CarDto> getCarsByBranch(){
+        return carService.getCars();
     }
 
     @GetMapping("/{carId}")
-    public Car getCar(@PathVariable(value = "carId") int carId , int branchId){
-        return carService.getCar(carId,branchId);
+    public CarDto getCar(@PathVariable(value = "carId") int carId){
+        return carService.getCar(carId);
     }
     @PutMapping("/{carId}")
-    public Car updateCar(@Valid @RequestBody Car car,@PathVariable(value = "carId") int carId, int branchId){
-        return carService.update(car,carId,branchId);
+    public CarDto updateCar(@Valid @RequestBody CarDto car,@PathVariable(value = "carId") int carId){
+        return carService.update(car,carId);
     }
     @DeleteMapping("/{carId}")
-    public ResponseEntity<Car> removeCar(@PathVariable int carId,int branchId){
-        carService.delete(carId,branchId);
+    public ResponseEntity<CarDto> removeCar(@PathVariable int carId){
+        carService.delete(carId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

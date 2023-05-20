@@ -2,18 +2,19 @@ package com.example.carrental.service;
 
 
 
+import com.example.carrental.dto.EmployeeDto;
 import com.example.carrental.model.Employee;
 
 import java.util.List;
 
 public interface EmployeeService {
-    Employee addNewEmployee(Employee employee);
+    EmployeeDto addNewEmployee(EmployeeDto employeeDto);
 
-    List<Employee> getEmployees();
+    List<EmployeeDto> getEmployees();
 
-    Employee getById(int id);
+    EmployeeDto getById(int id);
 
-    Employee updateEmployee(Employee employee,int id);
+    EmployeeDto updateEmployee(EmployeeDto employee,int id);
 
     void delete(int id);
 }

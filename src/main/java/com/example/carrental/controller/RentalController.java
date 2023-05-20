@@ -1,5 +1,6 @@
 package com.example.carrental.controller;
 
+import com.example.carrental.dto.RentalDto;
 import com.example.carrental.model.Rental;
 import com.example.carrental.service.RentalService;
 import jakarta.validation.Valid;
@@ -14,29 +15,30 @@ import java.util.List;
 @RequestMapping("/rental")
 public class RentalController {
 
-    @Autowired
     private RentalService rentalService;
 
+    @Autowired
+    public RentalController(RentalService rentalService) {
+        this.rentalService = rentalService;
+    }
+
     @PostMapping()
-    public ResponseEntity<Rental> addRental(@Valid @RequestBody Rental rental){
+    public ResponseEntity<RentalDto> addRental(@Valid @RequestBody RentalDto rentalDto){
 
-        Rental newRental= rentalService.createNewRental(rental);
-
-        return new ResponseEntity<>(newRental, HttpStatus.CREATED);
+        return new ResponseEntity<>(rentalService.createNewRental(rentalDto),HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Rental>> getRental(){
+    public ResponseEntity<List<RentalDto>> getAllRentals(){
 
-        List<Rental> rentals = rentalService.listAllRentals();
-
-        return new ResponseEntity<>(rentals,HttpStatus.OK);
+        return new ResponseEntity<>(rentalService.listAllRentals(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Rental getRentalById(@PathVariable("id") int id){
+    public RentalDto getRentalById(@PathVariable("id") int id){
        return rentalService.getRental(id);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity deleteRentalById(@PathVariable("id") int id){
         rentalService.deleteRentalById(id);
@@ -44,8 +46,8 @@ public class RentalController {
     }
 
     @PutMapping("/{id}")
-    public Rental updateRental(@Valid @RequestBody Rental rental,@PathVariable int id){
-        return rentalService.configureRental(rental,id);
+    public ResponseEntity<RentalDto> updateRental(@Valid @RequestBody RentalDto rentalDto,@PathVariable int id){
+        return new ResponseEntity<>(rentalService.configureRental(rentalDto,id),HttpStatus.ACCEPTED);
     }
 
 }

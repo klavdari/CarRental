@@ -1,5 +1,6 @@
 package com.example.carrental.controller;
 
+import com.example.carrental.dto.BranchDto;
 import com.example.carrental.model.Branch;
 import com.example.carrental.service.BranchService;
 import jakarta.validation.Valid;
@@ -23,19 +24,19 @@ public class BranchController {
     }
 
     @PostMapping("/branch")
-    public ResponseEntity<Branch> addBranch(int rentalId,
-                                           @Valid @RequestBody Branch branch){
-        Branch newBranch= branchService.create(rentalId,branch);
+    public ResponseEntity<BranchDto> addBranch(int rentalId,
+                                               @Valid @RequestBody BranchDto branchDto){
+        BranchDto newBranch= branchService.create(rentalId,branchDto);
         return new ResponseEntity<>(newBranch, HttpStatus.CREATED);
     }
 
     @GetMapping("/branch")
-    public List<Branch> getBranchesByRentalId(int rentalId){
+    public  List<BranchDto> getBranchesByRentalId(int rentalId){
         return branchService.getBranchesByRentalId(rentalId);
     }
 
     @GetMapping("/branch/{branchId}")
-    public Branch getBranchById(@PathVariable("branchId") int id, int rentalId){
+    public BranchDto getBranchById(@PathVariable("branchId") int id, int rentalId){
         return branchService.getBranchById(id,rentalId);
     }
 

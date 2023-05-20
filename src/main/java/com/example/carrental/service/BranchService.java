@@ -1,16 +1,17 @@
 package com.example.carrental.service;
 
+import com.example.carrental.dto.BranchDto;
 import com.example.carrental.model.Branch;
 
 import java.util.List;
 
 public interface BranchService {
 
-    Branch create(int rentalId,Branch branch);
+    BranchDto create(int rentalId, BranchDto branchDto);
 
-    List<Branch> getBranchesByRentalId(int rentalId);
+    List<BranchDto> getBranchesByRentalId(int rentalId);
 
-    Branch getBranchById(int id,int rentalId);
+    BranchDto getBranchById(int id,int rentalId);
 
     void delete(int id,int rentalId );
 

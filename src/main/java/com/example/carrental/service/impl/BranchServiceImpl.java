@@ -1,5 +1,7 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.dto.BranchDto;
+import com.example.carrental.dto.RentalDto;
 import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Branch;
 
@@ -7,8 +9,10 @@ import com.example.carrental.model.Rental;
 import com.example.carrental.repository.BranchRepository;
 import com.example.carrental.repository.RentalRepository;
 import com.example.carrental.service.BranchService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,31 +21,46 @@ public class BranchServiceImpl implements BranchService {
 
     private BranchRepository branchRepository;
     private RentalRepository rentalRepository;
+    private ModelMapper modelMapper;
 
-    public BranchServiceImpl(BranchRepository branchRepository,RentalRepository rentalRepository){
+    public BranchServiceImpl(BranchRepository branchRepository,
+                             RentalRepository rentalRepository,
+                             ModelMapper modelMapper){
         this.branchRepository = branchRepository;
         this.rentalRepository = rentalRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public Branch create(int rentalId, Branch branch) {
-        Rental rental = rentalRepository.findById(rentalId).orElse(null);
-        branch.setRental(rental);
-        return branchRepository.save(branch);
+    public BranchDto create(int rentalId, BranchDto branchDto) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElse(null);
+        RentalDto rentalDto = modelMapper.map(rental,RentalDto.class);
+        branchDto.setRentalId(rentalDto.getId());
+
+        Branch newBranch = branchRepository.save(modelMapper.map(branchDto,Branch.class));
+
+        return modelMapper.map(newBranch,BranchDto.class);
     }
 
     @Override
-    public List<Branch> getBranchesByRentalId(int rentalId) {
-        return branchRepository.findByRentalId(rentalId);
+    public List<BranchDto> getBranchesByRentalId(int rentalId) {
+        rentalRepository.findById(rentalId).orElseThrow(() ->
+                new ResourceNotFoundException("Rental not found with id " ,"id",rentalId));
+
+      List<Branch> branches = branchRepository.findByRentalId(rentalId);
+
+       return Arrays.asList(modelMapper.map(branches,BranchDto[].class));
     }
 
     @Override
-    public Branch getBranchById(int id,int rentalId) {
-    return branchRepository.findByRentalId(rentalId)
+    public BranchDto getBranchById(int id,int rentalId) {
+    Branch branch = branchRepository.findByRentalId(rentalId)
              .stream()
              .filter(b->b.getId() == id)
              .findFirst()
              .orElseThrow(() -> new ResourceNotFoundException("Branch","id",id));
+    return modelMapper.map(branch,BranchDto.class);
     }
 
     @Override

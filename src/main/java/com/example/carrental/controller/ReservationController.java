@@ -1,5 +1,6 @@
 package com.example.carrental.controller;
 
+import com.example.carrental.dto.ReservationDto;
 import com.example.carrental.model.Reservation;
 import com.example.carrental.service.ReservationService;
 import org.springframework.http.HttpStatus;
@@ -19,22 +20,22 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> addReservation(@RequestBody Reservation reservation){
+    public ResponseEntity<ReservationDto> addReservation(@RequestBody ReservationDto reservation){
         return new ResponseEntity<>(reservationService.createNewReservation(reservation), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> getReservations(){
+    public ResponseEntity<List<ReservationDto>> getReservations(){
         return new ResponseEntity<>(reservationService.getAllReservations(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservation(@PathVariable int id){
+    public ResponseEntity<ReservationDto> getReservation(@PathVariable int id){
         return new ResponseEntity<>(reservationService.getReservation(id),HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<Reservation> updateReservation(@RequestBody Reservation reservation,int id){
+    public ResponseEntity<ReservationDto> updateReservation(@RequestBody ReservationDto reservation,int id){
         return new ResponseEntity<>(reservationService.updateReservation(reservation,id),HttpStatus.OK);
     }
 

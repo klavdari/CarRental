@@ -1,13 +1,19 @@
 package com.example.carrental.service.impl;
 
+import com.example.carrental.dto.BranchDto;
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Branch;
 import com.example.carrental.model.Car;
 import com.example.carrental.repository.BranchRepository;
 import com.example.carrental.repository.CarRepository;
 import com.example.carrental.service.CarService;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -16,49 +22,62 @@ public class CarServiceImpl implements CarService {
 
     private CarRepository carRepository;
     private BranchRepository branchRepository;
+    private ModelMapper modelMapper;
 
-    public CarServiceImpl(CarRepository carRepository,BranchRepository branchRepository) {
+    public CarServiceImpl(CarRepository carRepository,BranchRepository branchRepository,ModelMapper modelMapper) {
         this.carRepository = carRepository;
         this.branchRepository = branchRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public Car addNewCar(Car car,int branchId){
-      Branch branch =  branchRepository.findById(branchId).orElseThrow(() -> new RuntimeException("Branch does not exist"));
-        car.setBranchLocated(branch);
-        return carRepository.save(car);
+    public CarDto addNewCar(CarDto carDto){
+
+      Branch branch =  branchRepository.findById(carDto.getBranchLocatedId()).orElseThrow(() ->
+              new RuntimeException("Branch does not exist"));
+      Car car = modelMapper.map(carDto,Car.class);
+      car.setBranchLocated(branch);
+      Car newCar = carRepository.save(car);
+
+       return modelMapper.map(newCar,CarDto.class);
     }
 
     @Override
-    public List<Car> getCars(int branchId) {
-        return carRepository.findCarsByBranchId(branchId);
+    public List<CarDto> getCars() {
+
+       List<Car> cars = carRepository.findAll();
+
+       return Arrays.asList(modelMapper.map(cars,CarDto[].class));
     }
 
     @Override
-    public Car getCar(int id,int branchId) {
+    public CarDto getCar(int id) {
 
-      return carRepository.findCarsByBranchId(branchId)
-                .stream()
-                .filter(c->c.getId() == id)
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Car","id",id));
+      Car car = carRepository.findById(id).orElseThrow(() ->
+              new ResourceNotFoundException("Car not found with id ","id",id));
+      return modelMapper.map(car,CarDto.class);
     }
 
     @Override
-    public Car update(Car newCar, int id,int branchId) {
+    public CarDto update(CarDto carDto, int id) {
 
-        Car car = getCar(id,branchId);
+        CarDto newCar = getCar(id);
 
-        car.setAmountPerDay(newCar.getAmountPerDay());
-        car.setMileage(newCar.getMileage());
-        car.setBranchLocated(car.getBranchLocated());
+        newCar.setAmountPerDay(carDto.getAmountPerDay());
+        newCar.setMileage(carDto.getMileage());
+        newCar.setBranchLocatedId(carDto.getBranchLocatedId());
+        newCar.setStatus(carDto.getStatus());
 
-        return carRepository.save(car);
+
+        Car car = modelMapper.map(newCar, Car.class);
+
+        carRepository.save(car);
+
+        return modelMapper.map(car,CarDto.class);
     }
 
     @Override
-    public void delete(int id,int branchId) {
-        Car car = getCar(id,branchId);
-        carRepository.deleteById(car.getId());
+    public void delete(int id) {
+        carRepository.deleteById(id);
     }
 }

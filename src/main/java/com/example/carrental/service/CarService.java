@@ -1,18 +1,20 @@
 package com.example.carrental.service;
 
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.model.Car;
 
 import java.util.List;
 
 public interface CarService {
 
-    Car addNewCar(Car car,int branchId);
+    CarDto addNewCar(CarDto carDto);
 
-    List<Car> getCars(int branchId);
+    List<CarDto> getCars();
 
-    Car getCar(int id,int branchId);
+    CarDto getCar(int id);
 
-    Car update(Car car,int id,int branchId);
+    CarDto update(CarDto carDto,int id);
 
-    void delete(int id,int branchId);
+    void delete(int id);
+
 }
