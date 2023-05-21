@@ -46,4 +46,8 @@ public class CarController {
         carService.delete(carId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @GetMapping("/booked")
+    public List<CarDto> getBookedCars(){
+        return carService.findAllByStatus();
+    }
 }

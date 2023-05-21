@@ -5,6 +5,7 @@ import com.example.carrental.dto.CarDto;
 import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Branch;
 import com.example.carrental.model.Car;
+import com.example.carrental.model.Status;
 import com.example.carrental.repository.BranchRepository;
 import com.example.carrental.repository.CarRepository;
 import com.example.carrental.service.CarService;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,5 +81,11 @@ public class CarServiceImpl implements CarService {
     @Override
     public void delete(int id) {
         carRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CarDto> findAllByStatus() {
+        List<Car> bookedCars = carRepository.findAllByStatus(Status.BOOKED);
+        return Arrays.asList(modelMapper.map(bookedCars,CarDto[].class));
     }
 }

@@ -2,6 +2,7 @@ package com.example.carrental.service;
 
 import com.example.carrental.dto.CarDto;
 import com.example.carrental.model.Car;
+import com.example.carrental.model.Status;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface CarService {
 
     void delete(int id);
 
+    List<CarDto> findAllByStatus();
 }
