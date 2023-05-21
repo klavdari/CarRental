@@ -10,6 +10,7 @@ import com.example.carrental.repository.ReservationRepository;
 import com.example.carrental.service.CarService;
 import com.example.carrental.service.ReservationService;
 import org.modelmapper.ModelMapper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -39,19 +40,7 @@ public class ReservationServiceImpl implements ReservationService {
         CarDto carDto = carService.getCar(reservationDto.getCarId());
 
 
-        if (carDto.getBranchLocatedId() != reservationDto.getBranchOfLoanId()) {
-            throw new RuntimeException("Car not found in selected branch " + reservationDto.getBranchOfLoanId());
-        }
-        else if(reservationRepository.isCarBooked(carDto.getId(),
-                reservationDto.getDateFrom(),
-                reservationDto.getDateTo())){
-
-            throw new RuntimeException("Car is booked");
-        } else {
-            carDto.setStatus(Status.BOOKED);
-            carDto.setBranchLocatedId(reservationDto.getBranchOfReturnId());
-            carService.update(carDto,reservationDto.getCarId());
-        }
+        reservationCheck(reservationDto, carDto);
 
         Reservation reservation = reservationRepository.save(modelMapper.map(reservationDto,Reservation.class));
 
@@ -78,10 +67,15 @@ public class ReservationServiceImpl implements ReservationService {
         ReservationDto newReservation = getReservation(id);
 
         newReservation.setCarId(reservationDto.getCarId());
+
+        CarDto carDto = carService.getCar(reservationDto.getCarId());
+
         newReservation.setBranchOfLoanId(reservationDto.getBranchOfLoanId());
         newReservation.setBranchOfReturnId(reservationDto.getBranchOfReturnId());
         newReservation.setDateFrom(reservationDto.getDateFrom());
         newReservation.setDateTo(reservationDto.getDateTo());
+
+        reservationCheck(reservationDto, carDto);
 
         Reservation reservation = modelMapper.map(newReservation,Reservation.class);
         reservationRepository.save(reservation);
@@ -89,8 +83,34 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(reservation,ReservationDto.class);
     }
 
+    private void reservationCheck(ReservationDto reservationDto, CarDto carDto) {
+        if (carDto.getBranchLocatedId() != reservationDto.getBranchOfLoanId()) {
+            throw new RuntimeException("Car not found in selected branch " + reservationDto.getBranchOfLoanId());
+
+        } else if (!dateCheck(reservationDto.getDateFrom(),reservationDto.getDateTo())) {
+            throw new RuntimeException("Starting date cannot be after returning date");
+
+        } else if(reservationRepository.isCarBooked(carDto.getId(),
+                reservationDto.getDateFrom(),
+                reservationDto.getDateTo())){
+
+            throw new RuntimeException("Car is booked");
+        } else {
+            carDto.setStatus(Status.BOOKED);
+            carDto.setBranchLocatedId(reservationDto.getBranchOfReturnId());
+            carService.update(carDto,reservationDto.getCarId());
+        }
+    }
+
     @Override
     public void cancelReservation(int id) {
         reservationRepository.deleteById(id);
+    }
+
+    public boolean dateCheck(LocalDate fromDate,LocalDate toDate){
+        if(fromDate.isAfter(toDate)){
+            return false;
+        }else
+            return true;
     }
 }
