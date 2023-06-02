@@ -36,8 +36,8 @@ public class BranchController {
     }
 
     @GetMapping("/branch/{branchId}")
-    public BranchDto getBranchById(@PathVariable("branchId") int id, int rentalId){
-        return branchService.getBranchById(id,rentalId);
+    public BranchDto getBranchById(@PathVariable("branchId") int id){
+        return branchService.getBranchById(id);
     }
 
     @DeleteMapping("/branch/{branchId}")

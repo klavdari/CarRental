@@ -39,6 +39,11 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.updateReservation(reservation,id),HttpStatus.OK);
     }
 
+    @GetMapping("/car/{id}")
+    public ResponseEntity<List<ReservationDto>> getReservationByCar(@PathVariable int id){
+        return new ResponseEntity<>(reservationService.getReservationByCar(id),HttpStatus.OK);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteReservation(int id){
         reservationService.cancelReservation(id);

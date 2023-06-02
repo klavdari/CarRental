@@ -4,6 +4,7 @@ import com.example.carrental.dto.CarDto;
 import com.example.carrental.model.Car;
 import com.example.carrental.model.Status;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CarService {
@@ -18,5 +19,7 @@ public interface CarService {
 
     void delete(int id);
 
-    List<CarDto> findAllByStatus();
+    List<CarDto> findAllBookedCars();
+
+    List<CarDto> findAllAvailableCars(LocalDate startDate,LocalDate endDate);
 }

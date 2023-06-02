@@ -1,6 +1,5 @@
 package com.example.carrental.service.impl;
 
-import com.example.carrental.dto.BranchDto;
 import com.example.carrental.dto.CarDto;
 import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.model.Branch;
@@ -10,8 +9,6 @@ import com.example.carrental.repository.BranchRepository;
 import com.example.carrental.repository.CarRepository;
 import com.example.carrental.service.CarService;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -68,7 +65,6 @@ public class CarServiceImpl implements CarService {
         newCar.setAmountPerDay(carDto.getAmountPerDay());
         newCar.setMileage(carDto.getMileage());
         newCar.setBranchLocatedId(carDto.getBranchLocatedId());
-        newCar.setStatus(carDto.getStatus());
 
 
         Car car = modelMapper.map(newCar, Car.class);
@@ -84,8 +80,20 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDto> findAllByStatus() {
+    public List<CarDto> findAllBookedCars() {
         List<Car> bookedCars = carRepository.findAllByStatus(Status.BOOKED);
         return Arrays.asList(modelMapper.map(bookedCars,CarDto[].class));
     }
+
+    @Override
+    public List<CarDto> findAllAvailableCars(LocalDate startDate,LocalDate endDate) {
+        List<CarDto> cars = Arrays.asList(modelMapper.map(carRepository.findAvailableCarsInGivenPeriod(startDate,endDate),CarDto[].class));
+
+        for (CarDto car : cars){
+            car.setStatus(Status.AVAILABLE);
+        }
+        return cars;
+    }
+
+
 }

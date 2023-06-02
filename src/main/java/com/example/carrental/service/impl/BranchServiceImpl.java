@@ -46,7 +46,7 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public List<BranchDto> getBranchesByRentalId(int rentalId) {
         rentalRepository.findById(rentalId).orElseThrow(() ->
-                new ResourceNotFoundException("Rental not found with id " ,"id",rentalId));
+                new ResourceNotFoundException("Rental" ,"id",rentalId));
 
       List<Branch> branches = branchRepository.findByRentalId(rentalId);
 
@@ -54,12 +54,9 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
-    public BranchDto getBranchById(int id,int rentalId) {
-    Branch branch = branchRepository.findByRentalId(rentalId)
-             .stream()
-             .filter(b->b.getId() == id)
-             .findFirst()
-             .orElseThrow(() -> new ResourceNotFoundException("Branch","id",id));
+    public BranchDto getBranchById(int id) {
+    Branch branch = branchRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("Branch","id",id));
     return modelMapper.map(branch,BranchDto.class);
     }
 

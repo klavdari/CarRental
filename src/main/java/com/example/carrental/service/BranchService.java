@@ -11,7 +11,7 @@ public interface BranchService {
 
     List<BranchDto> getBranchesByRentalId(int rentalId);
 
-    BranchDto getBranchById(int id,int rentalId);
+    BranchDto getBranchById(int id);
 
     void delete(int id,int rentalId );
 
