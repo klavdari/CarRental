@@ -21,4 +21,7 @@ public class BranchDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int rentalId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean active;
 }

@@ -1,15 +1,10 @@
 package com.example.carrental.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -43,13 +38,8 @@ public class Car {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;
+    private Status status = Status.AVAILABLE;
 
-    @Column(name = "status_from_date")
-    private LocalDate fromDateStatus;
-
-    @Column(name = "status_to_date")
-    private LocalDate toDateStatus;
 
     @Column(name = "amount_per_day")
     @NotNull
@@ -58,6 +48,5 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "branch_located")
     private Branch branchLocated;
-
 
 }

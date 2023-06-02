@@ -1,32 +1,29 @@
 package com.example.carrental.dto;
 
-import com.example.carrental.model.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class ReservationDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Temporal(TemporalType.TIMESTAMP)
-    private final Instant dateOfBooking = Instant.now();
+    private LocalDate dateOfBooking;
 
     private LocalDate dateFrom;
 
     private LocalDate dateTo;
 
     private int carId;
-
-    private Status carStatus;
 
     private int branchOfLoanId;
 

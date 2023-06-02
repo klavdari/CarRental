@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,10 +22,9 @@ public class Reservation {
     @Column(name = "reservation_id")
     private int id;
 
-    @CreationTimestamp
     @Column(name = "date_of_booking")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Instant dateOfBooking;
+    @CreatedDate
+    private LocalDate dateOfBooking;
 
     @ManyToOne
     @JoinColumn(name = "customer")

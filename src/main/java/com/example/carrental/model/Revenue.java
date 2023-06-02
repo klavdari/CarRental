@@ -1,11 +1,13 @@
 package com.example.carrental.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.validator.constraints.br.CPF;
 
-@Data
+import java.time.LocalDate;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,4 +20,11 @@ public class Revenue {
 
     @Column(name = "total_revenue")
     private double totalRevenue;
+
+    @Column(name = "cashback")
+    private double cashback;
+
+    @Column(name = "date")
+    @Temporal(TemporalType.DATE)
+    private LocalDate date;
 }

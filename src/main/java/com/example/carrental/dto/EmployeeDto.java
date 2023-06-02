@@ -18,5 +18,5 @@ public class EmployeeDto {
 
     private Position position;
 
-    private int branchId;
+    private int workingBranchId;
 }

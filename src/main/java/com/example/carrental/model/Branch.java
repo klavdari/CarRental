@@ -21,24 +21,23 @@ public class Branch {
     private Integer id;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "street",column = @Column(name = "branch_street")),
-            @AttributeOverride(name = "city",column = @Column(name = "branch_city")),
-            @AttributeOverride(name = "zipCode",column = @Column(name = "branch_zip"))
-    })
+    @AttributeOverride(name = "street",column = @Column(name = "branch_street"))
+    @AttributeOverride(name = "city",column = @Column(name = "branch_city"))
+    @AttributeOverride(name = "zipCode",column = @Column(name = "branch_zip"))
     private Address address;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @OneToMany(mappedBy = "workingBranch")
     private List<Employee> employees;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @OneToMany(mappedBy = "branchLocated")
     private List<Car> availableCars;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "rental_located")
     private Rental rental;
+
+    @Column(name = "active_branch")
+    @JsonIgnore
+    private boolean active;
 
 }

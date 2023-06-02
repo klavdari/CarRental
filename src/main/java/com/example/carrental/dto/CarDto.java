@@ -3,8 +3,6 @@ package com.example.carrental.dto;
 import com.example.carrental.model.Body;
 import com.example.carrental.model.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -41,11 +39,9 @@ public class CarDto {
     @Min(value = 1,message = "amount cannot be lower than 0 ")
     private double amountPerDay;
 
-    private Status status;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Status status = Status.AVAILABLE;
 
-    private LocalDate fromDateStatus;
-
-    private LocalDate toDateStatus;
 
     private int branchLocatedId;
 }
