@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation,Integer> {
 
@@ -16,5 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
             + "OR (r.dateFrom >= :startDate AND r.dateTo <= :endDate))")
     boolean isCarBooked(int carId,LocalDate startDate,LocalDate endDate);
 
+
+    List<Reservation> findReservationsByCarId(int id);
 
 }
