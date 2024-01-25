@@ -11,6 +11,7 @@ public class DateFormatException extends RuntimeException{
     LocalDate endDate;
 
     public DateFormatException(LocalDate startDate, LocalDate endDate) {
+        //TODO add new exception start date cannot be before today
         super(startDate + " cannot be after " + endDate);
         this.startDate = startDate;
         this.endDate = endDate;

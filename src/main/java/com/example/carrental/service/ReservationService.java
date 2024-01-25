@@ -12,8 +12,6 @@ public interface ReservationService {
 
     ReservationDto getReservation(int id);
 
-    ReservationDto updateReservation(ReservationDto reservationDto,int id);
-
     void cancelReservation(int id);
 
     List<ReservationDto> getReservationByCar(int id);

@@ -34,10 +34,6 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.getReservation(id),HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<ReservationDto> updateReservation(@RequestBody ReservationDto reservation,int id){
-        return new ResponseEntity<>(reservationService.updateReservation(reservation,id),HttpStatus.OK);
-    }
 
     @GetMapping("/car/{id}")
     public ResponseEntity<List<ReservationDto>> getReservationByCar(@PathVariable int id){

@@ -23,7 +23,7 @@ public class ReservationDto {
 
     private LocalDate dateTo;
 
-    private int carId;
+    private Integer carId;
 
     private int branchOfLoanId;
 

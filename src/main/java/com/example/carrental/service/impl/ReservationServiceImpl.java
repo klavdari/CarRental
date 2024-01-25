@@ -70,28 +70,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-    //TODO updateReservation -> bug -> updated reservation cannot override current reservation
-    @Override
-    public ReservationDto updateReservation(ReservationDto reservationDto, int id) {
-
-        ReservationDto newReservation = getReservation(id);
-
-        newReservation.setCarId(reservationDto.getCarId());
-
-        CarDto carDto = carService.getCar(reservationDto.getCarId());
-
-        newReservation.setBranchOfLoanId(reservationDto.getBranchOfLoanId());
-        newReservation.setBranchOfReturnId(reservationDto.getBranchOfReturnId());
-        newReservation.setDateFrom(reservationDto.getDateFrom());
-        newReservation.setDateTo(reservationDto.getDateTo());
-
-        reservationCheck(reservationDto, carDto);
-
-        Reservation reservation = modelMapper.map(newReservation,Reservation.class);
-        reservationRepository.save(reservation);
-
-        return modelMapper.map(reservation,ReservationDto.class);
-    }
+//
 
     private void reservationCheck(ReservationDto reservationDto, CarDto carDto) {
         if (carDto.getBranchLocatedId() != reservationDto.getBranchOfLoanId()) {
@@ -134,7 +113,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         ReservationDto reservationDto = getReservation(id);
         RevenueDto revenue = new RevenueDto();
-        if(LocalDate.now().plus(2,ChronoUnit.DAYS).isBefore(reservationDto.getDateFrom())){
+        if(LocalDate.now().plusDays(2).isBefore(reservationDto.getDateFrom())){
 
             revenue.setCashback(-1 * reservationDto.getTotalAmount());
             revenue.setDate(LocalDate.now());
@@ -148,7 +127,14 @@ public class ReservationServiceImpl implements ReservationService {
             revenue.setCashback(-1 * reservationDto.getTotalAmount() * 0.8);
             revenue.setDate(LocalDate.now());
             revenueService.create(revenue);
+
+
+            CarDto carDto = carService.getCar(reservationDto.getCarId());
+            carDto.setStatus(Status.AVAILABLE);
+            carService.update(carDto,carDto.getId());
+
             reservationRepository.deleteById(id);
+
         }
 
     }
@@ -161,11 +147,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     }
 
-    public boolean dateCheck(LocalDate fromDate,LocalDate toDate){
-        if(fromDate.isAfter(toDate)){
-            return false;
-        }else
-            return true;
+    public static boolean dateCheck(LocalDate fromDate,LocalDate toDate){
+        return !fromDate.isAfter(toDate) && !fromDate.isBefore(LocalDate.now());
     }
 
     private double totalAmount(LocalDate start,LocalDate end,double amountPerDay,

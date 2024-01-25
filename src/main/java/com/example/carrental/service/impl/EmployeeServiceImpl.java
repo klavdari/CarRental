@@ -25,7 +25,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository,
                                ModelMapper modelMapper,
-                               BranchRepository branchRepository){
+                               BranchRepository branchRepository) {
         this.employeeRepository = employeeRepository;
         this.modelMapper = modelMapper;
         this.branchRepository = branchRepository;
@@ -35,52 +35,52 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto addNewEmployee(EmployeeDto employeeDto) {
 
         Branch branch = branchRepository.findById(employeeDto.getWorkingBranchId()).orElseThrow(() ->
-                new ResourceNotFoundException("Branch","id",employeeDto.getWorkingBranchId()));
+                new ResourceNotFoundException("Branch", "id", employeeDto.getWorkingBranchId()));
 
-        BranchDto branchDto = modelMapper.map(branch,BranchDto.class);
+        BranchDto branchDto = modelMapper.map(branch, BranchDto.class);
 
-        if(branchDto.isActive() && isManager(employeeDto)){
-                throw new RuntimeException("Manager exist in selected branch");
+        if (branchDto.isActive() && isManager(employeeDto)) {
+            throw new RuntimeException("Manager exist in selected branch");
         } else if (!branchDto.isActive() && isManager(employeeDto)) {
             branchDto.setActive(true);
             branchRepository.save(modelMapper.map(branchDto, Branch.class));
         }
 
-        Employee employee = modelMapper.map(employeeDto,Employee.class);
+        Employee employee = modelMapper.map(employeeDto, Employee.class);
         employee.setWorkingBranch(branch);
         Employee newEmployee = employeeRepository.save(employee);
-        return modelMapper.map(employee,EmployeeDto.class);
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     @Override
     public List<EmployeeDto> getEmployees() {
         List<Employee> employees = employeeRepository.findAll();
-        return Arrays.asList(modelMapper.map(employees,EmployeeDto[].class));
+        return Arrays.asList(modelMapper.map(employees, EmployeeDto[].class));
     }
 
     @Override
     public EmployeeDto getById(int id) {
 
         Employee employee = employeeRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Employee","id",id));
-        return modelMapper.map(employee,EmployeeDto.class);
+                new ResourceNotFoundException("Employee", "id", id));
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     @Override
     public EmployeeDto updateEmployee(EmployeeDto newEmployee, int id) {
         EmployeeDto employeeDto = getById(id);
         Branch branch = branchRepository.findById(employeeDto.getWorkingBranchId()).orElseThrow(() ->
-                new ResourceNotFoundException("Branch","id",employeeDto.getWorkingBranchId()));
+                new ResourceNotFoundException("Branch", "id", employeeDto.getWorkingBranchId()));
 
-        Branch newBranch = branchRepository.findById(newEmployee.getWorkingBranchId()).orElseThrow(()->
+        Branch newBranch = branchRepository.findById(newEmployee.getWorkingBranchId()).orElseThrow(() ->
                 new RuntimeException("Branch doesn't exist"));
 
 
-        if(isManager(employeeDto) && newEmployee.getPosition() == Position.EMPLOYEE){
+        if (isManager(employeeDto) && newEmployee.getPosition() == Position.EMPLOYEE) {
             branch.setActive(false);
-        }else if (!branch.isActive() && newEmployee.getPosition() == Position.MANAGER){
+        } else if (!branch.isActive() && newEmployee.getPosition() == Position.MANAGER) {
             branch.setActive(true);
-        }else if (isManager(employeeDto) && newEmployee.getPosition() == Position.MANAGER){
+        } else if (isManager(employeeDto) && newEmployee.getPosition() == Position.MANAGER) {
             throw new RuntimeException("Manager exist in selected branch");
         } else if (newBranch.isActive() && newEmployee.getPosition() == Position.MANAGER) {
             throw new RuntimeException("Manager exist in newly selected branch");
@@ -88,18 +88,25 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setPosition(newEmployee.getPosition());
         employeeDto.setWorkingBranchId(newEmployee.getWorkingBranchId());
 
-        Employee employee = employeeRepository.save(modelMapper.map(employeeDto,Employee.class));
+        Employee employee = employeeRepository.save(modelMapper.map(employeeDto, Employee.class));
 
-        return modelMapper.map(employee,EmployeeDto.class);
+        return modelMapper.map(employee, EmployeeDto.class);
     }
 
     @Override
     public void delete(int id) {
+        EmployeeDto employeeDto = getById(id);
+        if (isManager(employeeDto)) {
+            Branch branch = branchRepository
+                    .findById(employeeDto
+                            .getWorkingBranchId()).orElseThrow();
+            branch.setActive(false);
+        }
         employeeRepository.deleteById(id);
     }
 
 
-    private boolean isManager(EmployeeDto employeeDto){
+    private boolean isManager(EmployeeDto employeeDto) {
         return employeeDto.getPosition() == Position.MANAGER;
     }
 }
