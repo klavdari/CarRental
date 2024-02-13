@@ -3,11 +3,10 @@ package com.example.carrental.service.impl;
 import com.example.carrental.dto.CarDto;
 import com.example.carrental.exception.DateFormatException;
 import com.example.carrental.exception.ResourceNotFoundException;
-import com.example.carrental.model.Branch;
-import com.example.carrental.model.Car;
-import com.example.carrental.model.Status;
+import com.example.carrental.model.*;
 import com.example.carrental.repository.BranchRepository;
 import com.example.carrental.repository.CarRepository;
+import com.example.carrental.repository.ReservationRepository;
 import com.example.carrental.service.CarService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,12 +21,16 @@ public class CarServiceImpl implements CarService {
 
     private CarRepository carRepository;
     private BranchRepository branchRepository;
+    private ReservationRepository reservationRepository;
     private ModelMapper modelMapper;
 
-    public CarServiceImpl(CarRepository carRepository, BranchRepository branchRepository, ModelMapper modelMapper) {
+    public CarServiceImpl(CarRepository carRepository, BranchRepository branchRepository,
+                          ModelMapper modelMapper,
+                          ReservationRepository reservationRepository) {
         this.carRepository = carRepository;
         this.branchRepository = branchRepository;
         this.modelMapper = modelMapper;
+        this.reservationRepository = reservationRepository;
     }
 
     @Override
@@ -76,6 +79,8 @@ public class CarServiceImpl implements CarService {
         return modelMapper.map(car, CarDto.class);
     }
 
+
+
     @Override
     public void delete(int id) {
         carRepository.deleteById(id);
@@ -88,18 +93,126 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDto> findAllAvailableCars(LocalDate startDate, LocalDate endDate) {
+    public List<CarDto> findAllAvailableCars(LocalDate startDate,
+                                             LocalDate endDate,String color,String brand,String body,String model) {
         if (ReservationServiceImpl.dateCheck(startDate, endDate)) {
 
             List<CarDto> cars = Arrays.asList(modelMapper
                     .map(carRepository
-                            .findAvailableCarsInGivenPeriod(startDate, endDate), CarDto[].class));
+                            .findAvailableCarsInGivenPeriod(startDate,endDate,
+                                     color,brand,body,model)
+                            , CarDto[].class));
 
             for (CarDto car : cars) {
+
                 car.setStatus(Status.AVAILABLE);
             }
             return cars;
-        }else throw new DateFormatException(endDate,startDate);
+        } else throw new DateFormatException(endDate, startDate);
 
     }
+
+    @Override
+    public List<CarDto> findCarsByBrand(String brand) {
+        List<Car> cars = carRepository.findCarsByBrand(brand);
+        return Arrays.asList(modelMapper.map(cars, CarDto[].class));
+    }
+
+    @Override
+    public List<CarDto> findCarsByColor(String color) {
+        List<Car> cars = carRepository.findCarsByColor(color);
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+    }
+
+    @Override
+    public List<CarDto> findCarsByBody(String body) {
+        List<Car> cars = carRepository.findCarsByBodyType(Enum.valueOf(Body.class,body.toUpperCase()));
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+    }
+
+    @Override
+    public List<CarDto> findCarsLessThan(Double amount) {
+        List<Car> cars = carRepository.findCarsByAmountPerDayIsLessThanEqualOrderByAmountPerDay(amount);
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+    }
+
+    @Override
+    public List<CarDto> findCarsGreaterThan(Double amount) {
+        List<Car> cars = carRepository.findCarsByAmountPerDayIsGreaterThanEqualOrderByAmountPerDay(amount);
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+    }
+
+    @Override
+    public List<CarDto> findCarsByYearAfter(Integer year){
+        List<Car> cars = carRepository.findCarsByYearIsGreaterThanEqualOrderByYear(year);
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+     }
+
+     @Override
+     public List<CarDto> findCarsByYearBefore(Integer year){
+        List<Car> cars = carRepository.findCarsByYearIsLessThanEqualOrderByAmountPerDay(year);
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+     }
+
+    @Override
+    public List<CarDto> findCarsByBranchLocated(Integer branch) {
+        List<Car>  cars = carRepository.findCarsByBranchLocated(branchRepository.findById(branch).orElseThrow());
+        return Arrays.asList(modelMapper.map(cars,CarDto[].class));
+    }
+
+    @Override
+    public CarDto updateCarMileage(Integer carId, Integer mileage) {
+        Car car = carRepository.findById(carId).orElse(null);
+        car.setMileage(mileage);
+        carRepository.save(car);
+        return modelMapper.map(car,CarDto.class);
+    }
+
+    @Override
+    public CarDto updateCarStatus(Integer carId, Status status) {
+        Car car = carRepository.findById(carId).orElse(null);
+        car.setStatus(status);
+        carRepository.save(car);
+        return modelMapper.map(car,CarDto.class);
+    }
+
+    @Override
+    public CarDto updateCarPrice(Integer carId, Double amount) {
+        Car car = carRepository.findById(carId).orElse(null);
+        car.setAmountPerDay(amount);
+        carRepository.save(car);
+        return modelMapper.map(car,CarDto.class);
+    }
+
+    //@Scheduled(fixedRate = 1000) // Run every day at midnight
+    private void updateCarStatusBasedOnReservationsAutomatically() {
+        List<Car> cars = carRepository.findAll();
+
+        for (Car car : cars) {
+            updateCarStatusBasedOnReservations(car.getId());
+        }
+    }
+
+
+    private void updateCarStatusBasedOnReservations(int carId) {
+        Car car = carRepository.findById(carId).orElse(null);
+
+        if (car != null) {
+            LocalDate currentDate = LocalDate.now();
+            boolean isCarBooked = reservationRepository.isCarBookedAtCurrentDate(car, currentDate);
+
+            if (isCarBooked) {
+                // Car is booked
+                car.setStatus(Status.BOOKED);
+            } else if(car.getStatus() == Status.UNAVAILABLE) {
+                car.setStatus(Status.UNAVAILABLE);
+            }else{
+                // Car is available
+                car.setStatus(Status.AVAILABLE);
+            }
+
+            carRepository.save(car);
+        }
+    }
 }
+

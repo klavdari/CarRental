@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "car")
 public class Car {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "car_id")
@@ -28,7 +30,7 @@ public class Car {
     private Body bodyType;
 
     @Column(name = "color")
-    private String color;
+    private String  color;
 
     @Column(name = "year")
     private int year;
