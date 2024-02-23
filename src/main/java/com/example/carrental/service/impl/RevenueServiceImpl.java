@@ -2,6 +2,7 @@ package com.example.carrental.service.impl;
 
 import com.example.carrental.dto.RevenueDto;
 import com.example.carrental.model.Revenue;
+import com.example.carrental.repository.ReservationRepository;
 import com.example.carrental.repository.RevenueRepository;
 import com.example.carrental.service.RevenueService;
 import org.modelmapper.ModelMapper;
@@ -16,9 +17,12 @@ public class RevenueServiceImpl implements RevenueService {
     private RevenueRepository revenueRepository;
     private ModelMapper modelMapper;
 
-    public RevenueServiceImpl(RevenueRepository revenueRepository, ModelMapper modelMapper) {
+    private ReservationRepository reservationRepository;
+
+    public RevenueServiceImpl(RevenueRepository revenueRepository, ModelMapper modelMapper, ReservationRepository reservationRepository) {
         this.revenueRepository = revenueRepository;
         this.modelMapper = modelMapper;
+        this.reservationRepository = reservationRepository;
     }
 
     @Override
@@ -26,6 +30,7 @@ public class RevenueServiceImpl implements RevenueService {
 
         Revenue revenue = modelMapper.map(revenueDto,Revenue.class);
 
+        revenue.setReservation(reservationRepository.findById(revenueDto.getReservationId()).orElseThrow());
         revenueRepository.save(revenue);
         return modelMapper.map(revenue,RevenueDto.class);
     }

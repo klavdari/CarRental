@@ -1,5 +1,6 @@
 package com.example.carrental.controller;
 
+import com.example.carrental.dto.RefundDto;
 import com.example.carrental.model.Refund;
 import com.example.carrental.service.RefundService;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ public class RefundController {
     }
 
     @PostMapping
-    public ResponseEntity<Refund> addRefund(@Valid @RequestBody Refund refund){
+    public ResponseEntity<RefundDto> addRefund(@RequestBody RefundDto refund){
         return new ResponseEntity<>(refundService.addRefund(refund), HttpStatus.CREATED);
     }
 
@@ -33,17 +34,6 @@ public class RefundController {
     @GetMapping("/{id}")
     public ResponseEntity<Refund> getRefund(@PathVariable int id){
         return new ResponseEntity<>(refundService.getRefund(id),HttpStatus.OK);
-    }
-
-    @PutMapping
-    public ResponseEntity<Refund> updateRefund(@Valid @RequestBody Refund refund, int id){
-       return new ResponseEntity<>( refundService.updateRefund(refund, id),HttpStatus.OK);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> deleteRefund(int id){
-        refundService.deleteRefund(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

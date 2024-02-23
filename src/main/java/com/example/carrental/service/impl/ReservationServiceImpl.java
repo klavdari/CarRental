@@ -5,9 +5,7 @@ import com.example.carrental.dto.ReservationDto;
 import com.example.carrental.dto.RevenueDto;
 import com.example.carrental.exception.DateFormatException;
 import com.example.carrental.exception.ResourceNotFoundException;
-import com.example.carrental.model.Reservation;
-import com.example.carrental.model.Revenue;
-import com.example.carrental.model.Status;
+import com.example.carrental.model.*;
 import com.example.carrental.repository.ReservationRepository;
 import com.example.carrental.service.CarService;
 import com.example.carrental.service.ReservationService;
@@ -44,12 +42,15 @@ public class ReservationServiceImpl implements ReservationService {
         CarDto carDto = carService.getCar(reservationDto.getCarId());
 
         reservationCheck(reservationDto, carDto);
+        reservationDto.setReservationStatus(ReservationStatus.CREATED);
 
         Reservation reservation = reservationRepository.save(modelMapper.map(reservationDto,Reservation.class));
 
         RevenueDto revenue = new RevenueDto();
+        revenue.setReservationId(reservation.getId());
         revenue.setTotalRevenue(reservationDto.getTotalAmount());
         revenue.setDate(reservationDto.getDateOfBooking());
+        revenue.setRevenueType(RevenueType.NEW_ENTRY);
         revenueService.create(revenue);
 
         return modelMapper.map(reservation,ReservationDto.class);
@@ -69,8 +70,6 @@ public class ReservationServiceImpl implements ReservationService {
         return modelMapper.map(reservation,ReservationDto.class);
     }
 
-
-//
 
     private void reservationCheck(ReservationDto reservationDto, CarDto carDto) {
         if (carDto.getBranchLocatedId() != reservationDto.getBranchOfLoanId()) {
@@ -117,15 +116,20 @@ public class ReservationServiceImpl implements ReservationService {
 
             revenue.setCashback(-1 * reservationDto.getTotalAmount());
             revenue.setDate(LocalDate.now());
+            revenue.setReservationId(reservationDto.getId());
+            revenue.setRevenueType(RevenueType.REFUND);
             revenueService.create(revenue);
 
-
-            reservationRepository.deleteById(id);
+            Reservation reservation= reservationRepository.findById(reservationDto.getId()).orElseThrow();
+            reservation.setReservationStatus(ReservationStatus.CANCELLED);
+            reservationRepository.save(reservation);
         } else if (LocalDate.now().isAfter(reservationDto.getDateFrom())) {
             throw new RuntimeException("Could not cancel reservation.Date has passed.");
         }else {
             revenue.setCashback(-1 * reservationDto.getTotalAmount() * 0.8);
             revenue.setDate(LocalDate.now());
+            revenue.setReservationId(reservationDto.getId());
+            revenue.setRevenueType(RevenueType.REFUND);
             revenueService.create(revenue);
 
 
@@ -133,7 +137,10 @@ public class ReservationServiceImpl implements ReservationService {
             carDto.setStatus(Status.AVAILABLE);
             carService.update(carDto,carDto.getId());
 
-            reservationRepository.deleteById(id);
+            Reservation reservation= reservationRepository.findById(reservationDto.getId()).orElseThrow();
+            //TODO set status CANCELLED , add new refund status NOT_AVAILABLE,PENDING,REFUNDED
+            reservation.setReservationStatus(ReservationStatus.CANCELLED);
+            reservationRepository.save(reservation);
 
         }
 
@@ -145,6 +152,12 @@ public class ReservationServiceImpl implements ReservationService {
 
         return Arrays.asList(modelMapper.map(reservation,ReservationDto[].class));
 
+    }
+
+    @Override
+    public void updateReservationStatus(int id, ReservationStatus reservationStatus) {
+       Reservation reservation = reservationRepository.findById(id).orElseThrow();
+       reservation.setReservationStatus(reservationStatus);
     }
 
     public static boolean dateCheck(LocalDate fromDate,LocalDate toDate){

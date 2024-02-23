@@ -1,5 +1,6 @@
 package com.example.carrental.dto;
 
+import com.example.carrental.model.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,8 @@ public class ReservationDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private double totalAmount;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private ReservationStatus reservationStatus;
 
 
 }

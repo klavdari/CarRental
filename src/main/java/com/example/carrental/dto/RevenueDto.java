@@ -1,5 +1,6 @@
 package com.example.carrental.dto;
 
+import com.example.carrental.model.RevenueType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,9 +18,13 @@ public class RevenueDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int id;
 
+    private int reservationId;
+
     private double totalRevenue;
 
     private double cashback;
 
     private LocalDate date;
+
+    private RevenueType revenueType;
 }

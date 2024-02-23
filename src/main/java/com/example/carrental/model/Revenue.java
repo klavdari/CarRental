@@ -2,7 +2,6 @@ package com.example.carrental.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 
@@ -18,6 +17,10 @@ public class Revenue {
     @Column(name = "revenue_id")
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "reservation")
+    private Reservation reservation;
+
     @Column(name = "total_revenue")
     private double totalRevenue;
 
@@ -27,4 +30,8 @@ public class Revenue {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private LocalDate date;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "revenue_type")
+    private RevenueType revenueType;
 }

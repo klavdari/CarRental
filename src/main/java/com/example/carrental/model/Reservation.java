@@ -52,4 +52,8 @@ public class Reservation {
 
     @Column(name = "total_amount")
     private double totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_reservation")
+    private ReservationStatus reservationStatus;
 }
