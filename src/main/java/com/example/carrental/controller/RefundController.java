@@ -27,12 +27,12 @@ public class RefundController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Refund>> getRefunds(){
+    public ResponseEntity<List<RefundDto>> getRefunds(){
         return new ResponseEntity<>(refundService.getRefunds(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Refund> getRefund(@PathVariable int id){
+    public ResponseEntity<RefundDto> getRefund(@PathVariable int id){
         return new ResponseEntity<>(refundService.getRefund(id),HttpStatus.OK);
     }
 }

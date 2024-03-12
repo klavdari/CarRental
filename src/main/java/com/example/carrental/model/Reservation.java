@@ -54,6 +54,6 @@ public class Reservation {
     private double totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_reservation")
+    @Column(name = "reservation_status")
     private ReservationStatus reservationStatus;
 }

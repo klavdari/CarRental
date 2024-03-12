@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
             + "AND ((r.dateFrom <= :startDate AND r.dateTo >= :endDate) "
             + "OR (r.dateFrom <= :startDate AND r.dateTo >= :endDate) "
             + "OR (r.dateFrom >= :startDate AND r.dateTo <= :endDate))" +
-            "AND r.reservationStatus <> 'CANCELLED'")
+            "AND (r.reservationStatus IS NULL OR r.reservationStatus <> 'CANCELLED')")
     boolean isCarBooked(int carId,LocalDate startDate,LocalDate endDate);
 
 

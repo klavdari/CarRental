@@ -1,15 +1,19 @@
 package com.example.carrental.dto;
 
+import com.example.carrental.model.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 
 @Data
+@ToString
 public class LoanDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -27,12 +31,15 @@ public class LoanDto {
     private LocalDate reservationDateTo;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Temporal(TemporalType.TIMESTAMP)
-    private final Instant reservationDateOfBooking = Instant.now();
+    @CreatedDate
+    private LocalDate reservationDateOfBooking = LocalDate.now();
 
     private int reservationCarId;
 
     private int reservationBranchOfLoanId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private ReservationStatus reservationStatus;
 
     private int reservationBranchOfReturnId;
 

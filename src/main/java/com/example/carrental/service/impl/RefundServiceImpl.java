@@ -6,7 +6,6 @@ import com.example.carrental.model.Refund;
 import com.example.carrental.model.ReservationStatus;
 import com.example.carrental.model.RevenueType;
 import com.example.carrental.repository.RefundRepository;
-import com.example.carrental.repository.ReservationRepository;
 import com.example.carrental.service.RefundService;
 import com.example.carrental.service.ReservationService;
 import com.example.carrental.service.RevenueService;
@@ -14,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -69,12 +69,12 @@ public class RefundServiceImpl implements RefundService {
     }
 
     @Override
-    public Refund getRefund(int id) {
-        return refundRepository.findById(id).orElse(null);
+    public RefundDto getRefund(int id) {
+        return modelMapper.map(refundRepository.findById(id).orElse(null),RefundDto.class);
     }
 
     @Override
-    public List<Refund> getRefunds() {
-        return refundRepository.findAll();
+    public List<RefundDto> getRefunds() {
+        return Arrays.asList(modelMapper.map(refundRepository.findAll(),RefundDto[].class));
     }
 }

@@ -9,8 +9,8 @@ public interface RefundService {
 
     RefundDto addRefund(RefundDto refund);
 
-    Refund getRefund(int id);
+    RefundDto getRefund(int id);
 
-    List<Refund> getRefunds();
+    List<RefundDto> getRefunds();
 
 }

@@ -12,10 +12,12 @@ import com.example.carrental.service.ReservationService;
 import com.example.carrental.service.RevenueService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
@@ -44,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservationCheck(reservationDto, carDto);
         reservationDto.setReservationStatus(ReservationStatus.CREATED);
 
-        Reservation reservation = reservationRepository.save(modelMapper.map(reservationDto,Reservation.class));
+        Reservation reservation = reservationRepository.save(modelMapper.map(reservationDto, Reservation.class));
 
         RevenueDto revenue = new RevenueDto();
         revenue.setReservationId(reservation.getId());
@@ -53,54 +55,60 @@ public class ReservationServiceImpl implements ReservationService {
         revenue.setRevenueType(RevenueType.NEW_ENTRY);
         revenueService.create(revenue);
 
-        return modelMapper.map(reservation,ReservationDto.class);
+        return modelMapper.map(reservation, ReservationDto.class);
     }
 
     @Override
     public List<ReservationDto> getAllReservations() {
 
-        return Arrays.asList(modelMapper.map(reservationRepository.findAll(),ReservationDto[].class));
+        return Arrays.asList(modelMapper.map(reservationRepository.findAll(), ReservationDto[].class));
     }
 
     @Override
     public ReservationDto getReservation(int id) {
-        Reservation reservation =  reservationRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Reservation not found with id ", "id",id));
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Reservation not found with id ", "id", id));
 
-        return modelMapper.map(reservation,ReservationDto.class);
+        return modelMapper.map(reservation, ReservationDto.class);
     }
 
-
-    private void reservationCheck(ReservationDto reservationDto, CarDto carDto) {
+    @Override
+    public void reservationCheck(ReservationDto reservationDto, CarDto carDto) {
         if (carDto.getBranchLocatedId() != reservationDto.getBranchOfLoanId()) {
             throw new RuntimeException("Car not found in selected branch " + reservationDto.getBranchOfLoanId());
 
-        } else if (!dateCheck(reservationDto.getDateFrom(),reservationDto.getDateTo())) {
-            throw new DateFormatException(reservationDto.getDateFrom(),reservationDto.getDateTo());
+        } else if (!dateCheck(reservationDto.getDateFrom(), reservationDto.getDateTo())) {
+            throw new DateFormatException(reservationDto.getDateFrom(), reservationDto.getDateTo());
 
-        } else if(reservationRepository.isCarBooked(carDto.getId(),
+        } else if (reservationRepository.isCarBooked(carDto.getId(),
                 reservationDto.getDateFrom(),
-                reservationDto.getDateTo())){
+                reservationDto.getDateTo())) {
 
             throw new RuntimeException("Car is booked");
+
         } else {
-            if(LocalDate.now().isEqual(reservationDto.getDateFrom())){
+            if (reservationDto.getReservationStatus() == ReservationStatus.LOANED){
+                carDto.setStatus(Status.UNAVAILABLE);
+                reservationDto.setDateOfBooking(LocalDate.now());
+                carDto.setBranchLocatedId(reservationDto.getBranchOfReturnId());
+                carService.update(carDto, reservationDto.getCarId());
+            }
+           else if (LocalDate.now().isEqual(reservationDto.getDateFrom())) {
                 carDto.setStatus(Status.BOOKED);
                 reservationDto.setDateOfBooking(LocalDate.now());
                 carDto.setBranchLocatedId(reservationDto.getBranchOfReturnId());
-                carService.update(carDto,reservationDto.getCarId());
+                carService.update(carDto, reservationDto.getCarId());
                 reservationDto.
                         setTotalAmount(totalAmount(reservationDto.getDateFrom(),
-                                reservationDto.getDateTo(),carDto.getAmountPerDay(),
+                                reservationDto.getDateTo(), carDto.getAmountPerDay(),
                                 reservationDto.getBranchOfLoanId(),
                                 reservationDto.getBranchOfReturnId()));
 
-            }
-            else {
+            } else {
                 reservationDto.setDateOfBooking(LocalDate.now());
                 reservationDto.
                         setTotalAmount(totalAmount(reservationDto.getDateFrom(),
-                                reservationDto.getDateTo(),carDto.getAmountPerDay(),
+                                reservationDto.getDateTo(), carDto.getAmountPerDay(),
                                 reservationDto.getBranchOfLoanId(),
                                 reservationDto.getBranchOfReturnId()));
             }
@@ -112,7 +120,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         ReservationDto reservationDto = getReservation(id);
         RevenueDto revenue = new RevenueDto();
-        if(LocalDate.now().plusDays(2).isBefore(reservationDto.getDateFrom())){
+        if (LocalDate.now().plusDays(2).isBefore(reservationDto.getDateFrom())) {
 
             revenue.setCashback(-1 * reservationDto.getTotalAmount());
             revenue.setDate(LocalDate.now());
@@ -120,12 +128,12 @@ public class ReservationServiceImpl implements ReservationService {
             revenue.setRevenueType(RevenueType.REFUND);
             revenueService.create(revenue);
 
-            Reservation reservation= reservationRepository.findById(reservationDto.getId()).orElseThrow();
+            Reservation reservation = reservationRepository.findById(reservationDto.getId()).orElseThrow();
             reservation.setReservationStatus(ReservationStatus.CANCELLED);
             reservationRepository.save(reservation);
         } else if (LocalDate.now().isAfter(reservationDto.getDateFrom())) {
             throw new RuntimeException("Could not cancel reservation.Date has passed.");
-        }else {
+        } else {
             revenue.setCashback(-1 * reservationDto.getTotalAmount() * 0.8);
             revenue.setDate(LocalDate.now());
             revenue.setReservationId(reservationDto.getId());
@@ -135,9 +143,9 @@ public class ReservationServiceImpl implements ReservationService {
 
             CarDto carDto = carService.getCar(reservationDto.getCarId());
             carDto.setStatus(Status.AVAILABLE);
-            carService.update(carDto,carDto.getId());
+            carService.update(carDto, carDto.getId());
 
-            Reservation reservation= reservationRepository.findById(reservationDto.getId()).orElseThrow();
+            Reservation reservation = reservationRepository.findById(reservationDto.getId()).orElseThrow();
             //TODO set status CANCELLED , add new refund status NOT_AVAILABLE,PENDING,REFUNDED
             reservation.setReservationStatus(ReservationStatus.CANCELLED);
             reservationRepository.save(reservation);
@@ -150,24 +158,24 @@ public class ReservationServiceImpl implements ReservationService {
     public List<ReservationDto> getReservationByCar(int id) {
         List<Reservation> reservation = reservationRepository.findReservationsByCarId(id);
 
-        return Arrays.asList(modelMapper.map(reservation,ReservationDto[].class));
+        return Arrays.asList(modelMapper.map(reservation, ReservationDto[].class));
 
     }
 
     @Override
     public void updateReservationStatus(int id, ReservationStatus reservationStatus) {
-       Reservation reservation = reservationRepository.findById(id).orElseThrow();
-       reservation.setReservationStatus(reservationStatus);
+        Reservation reservation = reservationRepository.findById(id).orElseThrow();
+        reservation.setReservationStatus(reservationStatus);
     }
 
-    public static boolean dateCheck(LocalDate fromDate,LocalDate toDate){
+    public static boolean dateCheck(LocalDate fromDate, LocalDate toDate) {
         return !fromDate.isAfter(toDate) && !fromDate.isBefore(LocalDate.now());
     }
 
-    private double totalAmount(LocalDate start,LocalDate end,double amountPerDay,
-                               int loanBranch,int returnBranch){
-        long daysBetween = ChronoUnit.DAYS.between(start,end) + 1;
-        if(loanBranch != returnBranch){
+    private double totalAmount(LocalDate start, LocalDate end, double amountPerDay,
+                               int loanBranch, int returnBranch) {
+        long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
+        if (loanBranch != returnBranch) {
             return daysBetween * amountPerDay + 50;
         }
 

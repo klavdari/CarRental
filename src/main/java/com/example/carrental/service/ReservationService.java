@@ -1,5 +1,6 @@
 package com.example.carrental.service;
 
+import com.example.carrental.dto.CarDto;
 import com.example.carrental.dto.ReservationDto;
 import com.example.carrental.model.Reservation;
 import com.example.carrental.model.ReservationStatus;
@@ -18,4 +19,6 @@ public interface ReservationService {
     List<ReservationDto> getReservationByCar(int id);
 
     void updateReservationStatus(int id, ReservationStatus reservationStatus);
+
+    void reservationCheck(ReservationDto reservationDto, CarDto carDto);
 }
